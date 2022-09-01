@@ -13,7 +13,7 @@ app.use(cors({
 // app level middleware
 // Logging the requests
 app.use(morgan("dev"));
-// app.use(express.json());
+app.use(express.json());
 
 // http://localhost:5000/posts/5?likeCount=5
 // app.get('/:id', (request, response) => {
@@ -26,8 +26,11 @@ app.use(morgan("dev"));
 // })
 
 const HOST = 'localhost';
-const API_BASE_URL = 'https://api.myanimelist.net/v2/anime/6702?'
-app.use('/posts', createProxyMiddleware({
+let API_BASE_URL = 'https://api.myanimelist.net/v2/'
+app.use('/:info', (request, response, next) => {
+    API_BASE_URL += request.params.info
+    next()
+}, createProxyMiddleware({
     target: API_BASE_URL,
     changeOrigin: true,
     pathRewrite: {
